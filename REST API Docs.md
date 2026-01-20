@@ -16,7 +16,7 @@
 
 | 파라미터 | 타입 | 필수 | 설명 |
 | --- | --- | --- | --- |
-| form | string | ❌ | date-time/ 집계 시작 시간 |
+| from | string | ❌ | date-time/ 집계 시작 시간 |
 | to | string | ❌ | date-time/집계 종료 시간 |
 
 **Response (200 OK)**
@@ -89,20 +89,20 @@
 	  "content":[
 		  {
 	      "id": "like_1",
-	      "like_at": "2026-01-04T12:00:00Z"
+	      "like_at": "2026-01-04T12:00:00Z",
 		    "target": {  
 		      "comment": "첫번째 게시글",
-		      "author": "홍길동"
+		      "author": "홍길동",
 			    "like_count": 4,
 			    "created_at": "2026-01-04T12:00:00Z"
 			   }
 	    },
 	   {
 	      "id": "like_2",
-	      "like_at": "2026-01-04T12:00:00Z"
+	      "like_at": "2026-01-04T12:00:00Z",
 		    "target": {  
 		      "comment": "두번째 게시글",
-		      "author": "고길동"
+		      "author": "고길동",
 			    "like_count": 2,
 			    "created_at": "2026-01-04T12:00:00Z"
 			   }
@@ -111,7 +111,7 @@
   "pagination": {
     "page": 1,
     "size": 10,
-    "sort": "create_at",
+    "sort": "created_at",
     "order": "desc",
     "totalElements": 2
   }
@@ -163,15 +163,15 @@
 	  "content":[
 		  {
 	      "id": "comment_1",
-	      "comment": "첫번째 댓글",
-	      "author": "홍길동"
+	      "content": "첫번째 댓글",
+	      "author": "홍길동",
 		    "like_count": 4,
 		    "created_at": "2026-01-04T12:00:00Z"
 	    },
 	    {
 	      "id": "comment_2",
 	      "content": "두번째 댓글",
-	      "author": "고길동"
+	      "author": "고길동",
 		    "like_count": 7,
 		    "created_at": "2026-01-04T12:01:00Z"
 		  }
@@ -179,7 +179,7 @@
   "pagination": {
     "page": 1,
     "size": 10,
-    "sort": "create_at",
+    "sort": "created_at",
     "order": "desc",
     "totalElements": 2
   }
@@ -247,7 +247,7 @@
   "pagination": {
     "page": 1,
     "size": 10,
-    "sort": "create_at",
+    "sort": "created_at",
     "order": "desc",
     "totalElements": 2
   }
@@ -312,15 +312,15 @@
   "pagination": {
     "page": 1,
     "size": 10,
-    "sort": "create_at",
-    "order": : "desc"
+    "sort": "created_at",
+    "order": "desc"
   }
 }
 ```
 
 ---
 
-### { 게시글 정렬}
+### { 게시글 정렬 }
 
 **GET** `/posts` 
 
@@ -356,7 +356,7 @@
     "page": 1,
     "size": 10,
     "sort": "like_count",
-    "order": : "desc"
+    "order": "desc"
   }
 }
 ```
@@ -418,7 +418,7 @@
     "page": 1,
     "size": 10,
     "sort": "like_count",
-    "order": : "desc"
+    "order": "desc"
   }
 }
 ```
@@ -427,7 +427,7 @@
 
 ### { 게시글 상세 조회}
 
-**GET** `/post/{postid}` 
+**GET** `/post/{postId}` 
 
 특정 게시글을 상세 조회 합니다. 게시글의 전체 정보를 반환합니다.
 
@@ -493,7 +493,8 @@
 ```json
 {
   "status": "success",
-  "data": {
+  "data": [
+	  {
       "id": "post_1",
       "title": "첫번째 포스트",
       "author": "홍길동",
@@ -504,12 +505,13 @@
       "title": "두번째 포스트",
       "author": "김철수",
       "created_at": "2025-04-04T11:00:00Z"
-    },
+    }
+   ],
   "pagination": {
     "page": 1,
     "limit": 20,
     "total": 100,
-    "order": "asc"
+    "order": "desc"
   }
 }
 ```
@@ -544,8 +546,11 @@
 
 ```json
 {
-	"code": "USER_NOT_FOUND",
-	"message": "사용자를 찾을 수 없습니다."
+	"status": "error",
+	"error": {
+			"code": "USER_NOT_FOUND",
+			"message": "사용자를 찾을 수 없습니다."
+		}
 }
 ```
 
@@ -648,10 +653,17 @@ DELETE `/posts/{postId}/likes`
 | --- | --- | --- | --- |
 | **postId** | string | ✅ | 좋아요를 누를 게시글의 고유 식별자 입니다. |
 
-**Response (204 No Content)**
+**Response (201 Create)**
 
 ```json
-**204 No Content**
+{
+  "status": "success",
+  "data": {
+    "id": "like_123",
+    "post_id": "post_1",
+    "created_at": "2026-01-04T12:00:00Z"
+  }
+}
 ```
 
 **Response (401 Unauthorized)**
@@ -678,13 +690,25 @@ DELETE `/posts/{postId}/likes`
 }
 ```
 
+**Response (409 Conflict)**
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "ALREADY_LIKED",
+    "message": "이미 좋아요 누른 게시글입니다."
+  }
+}
+```
+
 ---
 
 ### { 댓글 삭제 }
 
 DELETE `/posts/{postId}/comments/{commentId}`
 
-새로운 리소스를 생성합니다.
+본인이 작성한 댓글을 삭제합니다.
 
 **Request Headers**
 
@@ -697,7 +721,7 @@ DELETE `/posts/{postId}/comments/{commentId}`
 | 파라미터 | 타입 | 필수 | 설명 |
 | --- | --- | --- | --- |
 | postId | string | ✅ | 댓글이 작성된 게시글의 고유 식별자 입니다. |
-| commentsId | string | ✅ | 작성된 댓글의 고유 식별자 입니다. |
+| commentId | string | ✅ | 작성된 댓글의 고유 식별자 입니다. |
 
 **Response (204 No Content)**
 
@@ -743,7 +767,7 @@ DELETE `/posts/{postId}/comments/{commentId}`
 
 ---
 
-### { 댓글 수정}
+### { 댓글 수정 }
 
 **PATCH**`/posts/{postId}/comments/{commentId}`
 
@@ -761,7 +785,7 @@ DELETE `/posts/{postId}/comments/{commentId}`
 | 파라미터 | 타입 | 필수 | 설명 |
 | --- | --- | --- | --- |
 | postId | string | ✅ | 댓글이 작성된 게시글의 고유 식별자 입니다. |
-| commentsId | string | ✅ | 작성된 댓글의 고유 식별자 입니다. |
+| commentId | string | ✅ | 작성된 댓글의 고유 식별자 입니다. |
 
 **Request Body**
 
@@ -807,7 +831,7 @@ DELETE `/posts/{postId}/comments/{commentId}`
 
 ### { 댓글 작성 }
 
-**POST**`/posts/{postId}`
+**POST**`/posts/{postId}/comments`
 
 새로운 리소스를 생성합니다.
 
@@ -869,7 +893,7 @@ DELETE `/posts/{postId}/comments/{commentId}`
 
 **DELETE** `/posts/{postId}`
 
-새로운 리소스를 생성합니다.
+자신이 작성한 게시글을 삭제합니다
 
 **Request Headers**
 
@@ -931,7 +955,7 @@ DELETE `/posts/{postId}/comments/{commentId}`
 
 **PATCH** `/posts/{postId}`
 
-기존 게시글을 수정합니다
+본인이 작성한 게시글을 수정합니다
 
 **Request Headers**
 
@@ -957,15 +981,24 @@ DELETE `/posts/{postId}/comments/{commentId}`
 
 ```json
 {
-  "tilte": "수정된 타이틀",
+  "title": "수정된 타이틀",
   "content": "수정된 콘텐츠"
 }
 ```
 
-**Response (204 No Content)**
+**Response (200 OK)**
 
 ```json
-204 No Content
+// Response (200 OK)
+{
+  "status": "success",
+  "data": {
+    "id": "post_1",
+    "title": "수정된 타이틀",
+    "content": "수정된 콘텐츠",
+    "updated_at": "2026-01-04T13:00:00Z"
+  }
+}
 ```
 
 **Response (401 Unauthorized)**
@@ -1067,7 +1100,7 @@ DELETE `/posts/{postId}/comments/{commentId}`
 
 ---
 
-### { 회원 탈퇴}
+### { 회원 탈퇴 }
 
 **DELETE** `/users/me`
 
@@ -1118,15 +1151,15 @@ PUT`/users/me/password`
 
 | 필드 | 타입 | 필수 | 설명 |
 | --- | --- | --- | --- |
-| currentPassword | string | ✅ | 기존 패스워드 |
-| newPassword | string | ✅ | 새로운 패스워드 |
+| current_password | string | ✅ | 기존 패스워드 |
+| new_password | string | ✅ | 새로운 패스워드 |
 
 **Request Example**
 
 ```json
 {
-  "currentPassword": "!Test1234",
-  "newPassword": "N!Test1234"
+  "current_password": "!Test1234",
+  "new_password": "N!Test1234"
 }
 ```
 
@@ -1162,7 +1195,7 @@ No Content
 
 ---
 
-### { 프로필 이미지 수정}
+### { 프로필 이미지 수정 }
 
 **PUT**`/users/me/profile-image`
 
@@ -1173,7 +1206,7 @@ No Content
 | 헤더 | 타입 | 필수 | 설명 |
 | --- | --- | --- | --- |
 | Authorization | string | ✅ | Bearer {access_token} |
-| Contest-Type | string | ✅ | multipart/form-data |
+| Context-Type | string | ✅ | multipart/form-data |
 
 **Request Body**
 
@@ -1212,7 +1245,7 @@ profileImage:(binary file)
 
 ---
 
-### {프로필 닉네임 수정}
+### { 프로필 닉네임 수정 }
 
 PATCH `/users/me`
 
@@ -1243,13 +1276,15 @@ PATCH `/users/me`
 
 ```json
 {
-  "id": "res_124",
-  "email": "test@admin.com",
-  "nickname": "새로운닉네임_12",
-  "profile_image_url": "https://cdn.example.com/profiles/res_124.png",
-  "created_at": "2026-01-04T12:00:00Z"
+	"status": "success",
+  "data": {
+	  "id": "res_124",
+	  "email": "test@admin.com",
+	  "nickname": "새로운닉네임_12",
+	  "profile_image_url": "https://cdn.example.com/profiles/res_124.png",
+	  "created_at": "2026-01-04T12:00:00Z"
+	}
 }
-
 ```
 
 **Response (400 Bad Request)**
@@ -1270,7 +1305,7 @@ PATCH `/users/me`
 {
 	"status": "error",
 	"error": {
-		"code": "DUFLICATE_NICKNAME",
+		"code": "DUPLICATE_NICKNAME",
 		"message": "이미 사용중인 닉네임입니다."
 	}
 }
@@ -1290,9 +1325,9 @@ PATCH `/users/me`
 
 ---
 
-### {로그인}
+### { 로그인 }
 
-**POST** `/auth/login`
+**POST** `/auth/tokens`
 
 이메일과 비밀번호로 사용자를 인증하고, 토큰을 발급한다.
 
@@ -1357,7 +1392,7 @@ PATCH `/users/me`
 
 ---
 
-### { 회원가입}
+### { 회원가입 }
 
 **POST**`/auth/signup`
 

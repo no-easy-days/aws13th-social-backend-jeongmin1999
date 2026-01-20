@@ -6,6 +6,8 @@ from routers.comments import router as comments_router
 from routers.auth import router as auth_router
 
 from dotenv import load_dotenv
+
+load_dotenv() # .env에서 키값 등 접근
 app = FastAPI()
 
 app.include_router(users_router)
@@ -14,4 +16,3 @@ app.include_router(likes_router)
 app.include_router(comments_router)
 app.include_router(auth_router)
 
-load_dotenv() # .env에서 키값 등 접근

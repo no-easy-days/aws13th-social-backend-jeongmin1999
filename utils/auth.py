@@ -27,19 +27,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 # oauth2 인증 스킴/ Bearer<token> 형식, auth/login에서 발급받는다
 
 def hash_password(password: str) -> str:
-    print("[hash_password] type:", type(password))
-    try:
-        print("[hash_password] len(chars):", len(password))
-        print("[hash_password] len(bytes):", len(password.encode("utf-8")))
-        print("[hash_password] preview:", password[:120])
-    except Exception as e:
-        print("[hash_password] not a str:", password, e)
     return pwd_context.hash(password)
 
 def verify_password(password: str, hashed_password: str) -> bool:
     return pwd_context.verify(password, hashed_password)
 
-def create_access_token(subject: str, expired_in = ACCESS_TOKEN_EXPIRE_MINUTES) -> str:
+def create_access_token(subject: str) -> str:
     now = datetime.now(timezone.utc)
     payload = {
         "sub": subject,

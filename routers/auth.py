@@ -25,9 +25,8 @@ def login(payload : OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status_code=400, detail="plz sign up")
     if not user or not verify_password(payload.password, user["hashed_password"]):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    print(f"{user['email']}, {user['nickname']}")
     auth = {
-        "access_token": create_access_token(user["email"]),
+        "access_token": create_access_token(str(user["id"])),
         "token_type": "bearer",
         "expires_in": 3600
     }

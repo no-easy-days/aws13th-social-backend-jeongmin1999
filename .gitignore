@@ -388,3 +388,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,pycharm+all,intellij+all,venv,python
+
+# User Data
+data/*.json

@@ -16,7 +16,7 @@ router = APIRouter(
 # 게시글 목록 조회 (페이지네이션 추가하기)
 @router.get("/", response_model=list[PostOut])
 def list_post():
-    return read_json("posts.json",default=[])
+    pass
 
 # 게시글 검색
 @router.get("/",response_model=PostOut)
@@ -70,7 +70,7 @@ def delete_post(post_id: int, user=Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Post not found")
     if not(post["author_id"] == int(user["id"])):
         raise HTTPException(status_code=403, detail="User doesn't have permission")
-    posts = [p for p in posts if int(p["id"]) is not post_id]
+    posts = [p for p in posts if int(p["id"]) != post_id]
     write_json("posts.json",posts)
     return {"message": "success"}
 
