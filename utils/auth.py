@@ -23,8 +23,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES","60"))
 # 그리고 os.getenv 쓰려면 환경변수 등록하거나 .env 파일에 정의해두고 main 에서 앱 실행 후 load_dotenv() 한번만 해주면 됨.
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
-# oauth2 인증 스킴/ Bearer<token> 형식, users/login에서 발급받는다
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+# oauth2 인증 스킴/ Bearer<token> 형식, auth/login에서 발급받는다
 
 def hash_password(password: str) -> str:
     print("[hash_password] type:", type(password))
