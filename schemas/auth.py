@@ -6,6 +6,10 @@ class TokenOut(BaseModel):
     token_type: str = "bearer"
     expires_in: int
 
+class TokenData(BaseModel):
+    username: str | None = None
+
+
 # class UserOut(BaseModel):
 #     id: int
 #     email: EmailStr

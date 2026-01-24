@@ -58,5 +58,5 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
     users = read_json("users.json", default=[])
     user = next((u for u in users if str(u["id"]) == str(user_id)),None)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=401, detail="User not found")
     return user

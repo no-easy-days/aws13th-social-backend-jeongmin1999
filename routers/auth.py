@@ -15,15 +15,15 @@ router = APIRouter(
 
 # 회원 로그인 (DONE!)
 @router.post("/login",response_model=TokenOut)
-def login(payload : OAuth2PasswordRequestForm = Depends()):
+def login(form_data : OAuth2PasswordRequestForm = Depends()):
     users = read_json("users.json", default=[])
 
-    user = next((u for u in users if u['email'] == payload.username), None)
-    if payload is None:
+    user = next((u for u in users if u['email'] == form_data.username), None)
+    if form_data is None:
         raise HTTPException(status_code=400, detail="Invalid form")
     if user is None:
         raise HTTPException(status_code=400, detail="plz sign up")
-    if not user or not verify_password(payload.password, user["hashed_password"]):
+    if not user or not verify_password(form_data.password, user["hashed_password"]):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     auth = {
         "access_token": create_access_token(str(user["id"])),

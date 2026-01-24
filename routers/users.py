@@ -23,7 +23,7 @@ def getprofile(payload: UserOut):
 def getuser(payload: UserOut):
     pass
 
-# 프로필 닉네임 수정 (작성중)
+# 프로필 닉네임 수정 (DONE!)
 @router.patch("/me",response_model=UserOut)
 def update_profile_nickname(
         payload: NickNameUpdateIn,
@@ -31,7 +31,7 @@ def update_profile_nickname(
 
     users = read_json("users.json", default=[])
 
-    user = next(u for u in users if u["id"] == current_user["id"])
+    user = next((u for u in users if u["id"] == current_user["id"]), None)
     user["nickname"] = payload.nickname
 
     write_json("users.json", users)
