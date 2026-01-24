@@ -10,9 +10,11 @@ from dotenv import load_dotenv
 load_dotenv() # .env에서 키값 등 접근
 app = FastAPI()
 
+app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(posts_router)
-app.include_router(likes_router)
 app.include_router(comments_router)
-app.include_router(auth_router)
+app.include_router(likes_router)
+
+
 

@@ -14,23 +14,21 @@ router = APIRouter(
 )
 
 # 게시글 목록 조회 (페이지네이션 추가하기)
-@router.get("/", response_model=list[PostOut])
+@router.get("")
 def list_post():
     pass
 
 # 게시글 검색
-@router.get("/",response_model=PostOut)
-def search_post(query=keyword):
-    posts = read_json("posts.json",default=[])
+@router.get("/search")
+def search_post():
     pass
 
 # 게시글 상세 조회
-@router.get("/{post_id}",response_model=PostOut)
-def get_post(post_id: int, user=Depends(get_current_user)):
-    posts = read_json("posts.json",default=[])
+@router.get("/{post_id}")
+def get_post():
     pass
 
-# 게시글 작성
+# 게시글 작성 (작성중)
 @router.post("/",response_model=PostOut)
 def create_post(payload: PostCreate, user=Depends(get_current_user)):
     posts = read_json("posts.json",default=[])
@@ -43,7 +41,7 @@ def create_post(payload: PostCreate, user=Depends(get_current_user)):
     }
     posts.append(post)
     read_json("posts.json",default=posts)
-    return posts
+    return post
 
 # 게시글 수정
 @router.patch("/{post_id}",response_model=PostOut)
@@ -68,7 +66,7 @@ def delete_post(post_id: int, user=Depends(get_current_user)):
     post = next((p for p in posts if int(p["id"]) == post_id),None)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
-    if not(post["author_id"] == int(user["id"])):
+    if post["author_id"] != int(user["id"]):
         raise HTTPException(status_code=403, detail="User doesn't have permission")
     posts = [p for p in posts if int(p["id"]) != post_id]
     write_json("posts.json",posts)

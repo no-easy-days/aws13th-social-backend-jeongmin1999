@@ -1,8 +1,4 @@
 
-# JSON 저장소 접근 역할
-# JSON 읽기/쓰기
-# 기본 CRUD 헬퍼
-
 import json
 import os
 from pathlib import Path
@@ -12,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data"
 
 def _ensure_file(path: Path, default: Any) -> None :
-    path.parent.mkdir(parents=True, exist_ok=True) # 중간 경로 빠져도 생성하고, 해당 파일이 이미 있으면 아무것도 안함
+    path.parent.mkdir(parents=True, exist_ok=True)
     if not path.exists():
         path.write_text(json.dumps(default, ensure_ascii=False, indent=2), encoding="utf-8")
 

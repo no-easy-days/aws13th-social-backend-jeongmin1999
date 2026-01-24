@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from schemas.comment import CommentOut
 from schemas.post import PostOut
@@ -14,13 +14,13 @@ router = APIRouter(
 
 
 # 내 프로필 조회
-@router.get("/me",response_model=UserOut)
-def getprofile(payload: UserOut):
+@router.get("/me")
+def getprofile():
     pass
 
 # 특정 회원 조회
-@router.get("/{user_id}",response_model=UserOut)
-def getuser(payload: UserOut):
+@router.get("/{user_id}")
+def getuser():
     pass
 
 # 프로필 닉네임 수정 (DONE!)
@@ -32,43 +32,49 @@ def update_profile_nickname(
     users = read_json("users.json", default=[])
 
     user = next((u for u in users if u["id"] == current_user["id"]), None)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if any(u["nickname"] == payload.nickname and u["id"] != current_user["id"] for u in users):
+        raise HTTPException(status_code=400, detail="Nickname already taken")
+
     user["nickname"] = payload.nickname
 
     write_json("users.json", users)
     return user
 
 # 프로필 이미지 수정
-@router.put("/me/profile-image",response_model=UserOut)
-def update_profile_image(payload: UserOut):
+@router.put("/me/profile-image")
+def update_profile_image():
     pass
 
 # 비밀번호 변경
-@router.put("/me/password",response_model=UserOut)
-def update_profile_password(payload: UserOut):
+@router.put("/me/password")
+def update_profile_password():
     pass
 
 # 회원 탈퇴
-@router.delete("me",response_model=UserOut)
-def delete_profile(payload: UserOut):
+@router.delete("me")
+def delete_profile():
     pass
 
 # 내가 쓴 게시글 목록
-@router.get("/me/posts",response_model=PostOut)
-def get_user_posts(payload: UserOut):
+@router.get("/me/posts")
+def get_user_posts():
     pass
 
 # 내가 쓴 댓글 목록
-@router.get("/me/comments",response_model=CommentOut)
-def get_user_comments(payload: UserOut):
+@router.get("/me/comments")
+def get_user_comments():
     pass
 
 # 내가 좋아요한 게시글 목록
-@router.get("/me/likes",response_model=CommentOut)
-def get_user_likes(payload: UserOut):
+@router.get("/me/likes")
+def get_user_likes():
     pass
 
 # 좋아요 상태 확인
-@router.get("/me/posts/likes/summary",response_model=PostOut)
-def get_total_likes(payload: UserOut):
+@router.get("/me/posts/likes/summary")
+def get_total_likes():
     pass
 

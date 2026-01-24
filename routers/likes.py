@@ -1,9 +1,7 @@
 
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
-
-from utils.auth import get_current_user
+from fastapi import APIRouter, HTTPException
 
 from datetime import datetime
 
@@ -24,13 +22,13 @@ def _post_in_range():
     pass
 
 # 좋아요 등록
-@router.post("/posts/{postId}/likes")
-def like_post(post_id: int, user=Depends(get_current_user)):
+@router.post("/posts/{post_id}/likes")
+def like_post():
     pass
 
 # 좋아요 취소
-@router.delete("/posts/{postId}/likes")
-def unlike_post(post_id: int, user=Depends(get_current_user)):
+@router.delete("/posts/{post_id}/likes")
+def unlike_post():
     pass
 
 

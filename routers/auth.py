@@ -19,12 +19,13 @@ def login(form_data : OAuth2PasswordRequestForm = Depends()):
     users = read_json("users.json", default=[])
 
     user = next((u for u in users if u['email'] == form_data.username), None)
-    if form_data is None:
-        raise HTTPException(status_code=400, detail="Invalid form")
-    if user is None:
-        raise HTTPException(status_code=400, detail="plz sign up")
-    if not user or not verify_password(form_data.password, user["hashed_password"]):
+
+    if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    if not verify_password(form_data.password, user["hashed_password"]):
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
     auth = {
         "access_token": create_access_token(str(user["id"])),
         "token_type": "bearer",
@@ -36,8 +37,7 @@ def login(form_data : OAuth2PasswordRequestForm = Depends()):
 @router.post("/signup",response_model=UserOut)
 def signup(payload: UserCreate):
     users = read_json("users.json", default=[])
-    if users is None:
-        users = []
+
     if any(user["email"] == payload.email for user in users):
         raise HTTPException(status_code=400, detail="Email already registered")
     user = {
