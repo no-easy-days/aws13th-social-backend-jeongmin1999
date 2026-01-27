@@ -18,13 +18,20 @@ def get_profile(current_user : dict = Depends(get_current_user)):
     user = next((u for u in users if u["id"] == current_user["id"]), None)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    print(f"내 프로필 조회 : {user} ")
+    print(f"내 프로필 조회 : {user['nickname']}의 프로필 ")
     return user
 
-# 특정 회원 조회
-@router.get("/{user_id}")
-def get_user():
-    pass
+# 특정 회원 조회 (DONE!)
+@router.get("/{user_id}",response_model=UserOut)
+def get_user(user_id: int):
+    users = read_json("users.json", default=[])
+    user = next((u for u in users if u["id"] == user_id), None)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    print(f"특정 회원 프로필 조회 : {user['nickname']} 프로필 ")
+    # return 이후에 HTTP 응답에서 Response_model에 정의한 필드만 나가고
+    # print(user)에서는 모든 값이 출력됨
+    return user
 
 # 프로필 닉네임 수정 (DONE!)
 @router.patch("/me",response_model=UserOut)
